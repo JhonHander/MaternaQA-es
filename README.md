@@ -301,6 +301,9 @@ MaternaQA-es/
 | `evaluate_qa_with_ragas.py` | Evalúa muestras Q+A con métricas Ragas. |
 | `prepare_qa_publication_variants.py` | Exporta variantes listas para publicación. |
 | `train_qlora_trl.py` | Ejecuta fine-tuning experimental con TRL, PEFT y QLoRA. |
+| `inference_base.py` | Genera predicciones baseline con el modelo base sin adapter. |
+| `inference_qlora.py` | Genera predicciones con un adapter QLoRA entrenado. |
+| `evaluate_model_predictions.py` | Evalúa predicciones de modelos contra referencia y contexto fuente. |
 
 ## Documentación
 
