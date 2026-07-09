@@ -137,11 +137,34 @@ Antes de publicar o entrenar un modelo final, revisar una muestra estratificada:
 
 La revisión humana debe priorizar utilidad clínica, precisión, completitud, claridad, ausencia de alucinaciones y ausencia de recomendaciones peligrosas.
 
-## 8. Evaluación de Modelos Fine-Tuneados
+## 8. Evaluación de Modelos Base y Fine-Tuneados
 
-La evaluación del dataset y la evaluación del modelo son capas distintas. Para comparar adapters QLoRA, primero se generan predicciones sobre el mismo `test.jsonl` y luego se evalúa la respuesta generada contra la respuesta de referencia y el contexto fuente.
+La evaluación del dataset y la evaluación del modelo son capas distintas. Para medir el efecto real del fine-tuning, la comparación debe incluir el modelo base y el adapter QLoRA sobre el mismo `test.jsonl`.
 
-Para comparar Gemma vs MedGemma:
+La matriz mínima de comparación es:
+
+| Familia | Condición | Salida recomendada |
+|---|---|---|
+| Gemma 4 | Base sin fine-tuning | `outputs/gemma4-base/test_predictions.jsonl` |
+| Gemma 4 | QLoRA fine-tuned | `outputs/gemma4-grounded/test_predictions.jsonl` |
+| MedGemma 1.5 | Base sin fine-tuning | `outputs/medgemma-base/test_predictions.jsonl` |
+| MedGemma 1.5 | QLoRA fine-tuned | `outputs/medgemma-grounded/test_predictions.jsonl` |
+
+Primero se generan predicciones baseline con los modelos base:
+
+```bash
+python scripts/inference_base.py \
+  --model-name google/gemma-4-E2B-it \
+  --output-prefix outputs/gemma4-base/test
+
+python scripts/inference_base.py \
+  --model-name google/medgemma-1.5-4b-it \
+  --output-prefix outputs/medgemma-base/test
+```
+
+Los scripts de inferencia escriben cada predicción en JSONL apenas se genera. Si la ejecución se interrumpe, al correr el mismo comando se reanuda por defecto desde `<output-prefix>_predictions.jsonl` y se saltan los `qa_id` ya procesados. Para regenerar desde cero, usar `--no-resume`.
+
+Después se generan predicciones con los adapters fine-tuneados:
 
 ```bash
 python scripts/inference_qlora.py \
@@ -153,12 +176,20 @@ python scripts/inference_qlora.py \
   --output-prefix outputs/medgemma-grounded/test
 ```
 
-Para evaluar las predicciones de ambos modelos:
+Para evaluar las predicciones de base y fine-tuned:
 
 ```bash
 python scripts/evaluate_model_predictions.py \
+  --input outputs/gemma4-base/test_predictions.jsonl \
+  --output outputs/gemma4-base/test_eval.json
+
+python scripts/evaluate_model_predictions.py \
   --input outputs/gemma4-grounded/test_predictions.jsonl \
   --output outputs/gemma4-grounded/test_eval.json
+
+python scripts/evaluate_model_predictions.py \
+  --input outputs/medgemma-base/test_predictions.jsonl \
+  --output outputs/medgemma-base/test_eval.json
 
 python scripts/evaluate_model_predictions.py \
   --input outputs/medgemma-grounded/test_predictions.jsonl \
