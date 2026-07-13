@@ -1,5 +1,8 @@
 name: Sync Hugging Face dataset card
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [master, main]
