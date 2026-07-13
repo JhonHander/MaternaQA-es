@@ -7,8 +7,8 @@
 **MaternaQA-es es un dataset público en español dedicado a Q+A sobre atención médica materna. Se creó para apoyar la investigación en PLN, el ajuste de modelos de lenguaje grande (LLM Fine-tuning), los sistemas de recuperación de información (RAG) y las aplicaciones de IA centradas en la atención médica para las comunidades de habla hispana.**
 
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white&labelColor=1e293b)](https://python.org)
-[![Dataset](https://img.shields.io/badge/Dataset-5%2C727%20pares%20QA-EC4899?style=for-the-badge&logo=databricks&logoColor=white&labelColor=1e293b)](https://huggingface.co/datasets/JhonHander/obstetrics-qa-synthetic-es)
-[![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Datasets-FFD21E?style=for-the-badge&logo=huggingface&logoColor=white&labelColor=1e293b)](https://huggingface.co/datasets/JhonHander)
+[![Dataset](https://img.shields.io/badge/Dataset-5%2C727%20pares%20QA-EC4899?style=for-the-badge&logo=databricks&logoColor=white&labelColor=1e293b)](https://huggingface.co/datasets/iue-edu/MaternaCare-ES)
+[![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Datasets-FFD21E?style=for-the-badge&logo=huggingface&logoColor=white&labelColor=1e293b)](https://huggingface.co/organizations/iue-edu)
 [![PDFs](https://img.shields.io/badge/Fuentes-63%20PDFs%20cl%C3%ADnicos-22D3EE?style=for-the-badge&logo=adobeacrobatreader&logoColor=white&labelColor=1e293b)](./pdfs/obstetrics)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-FACC15?style=for-the-badge&logo=opensourceinitiative&logoColor=black&labelColor=1e293b)](./LICENSE)
 
@@ -21,9 +21,17 @@
 > [!IMPORTANT]
 > Este repositorio documenta y conserva el procesamiento usado para construir **MaternaQA-es**, un dataset de Q+A en español para investigación en NLP clínico sobre embarazo, maternidad, parto, posparto y atención perinatal. El foco no es presentar una herramienta de software, sino dejar trazable cómo se creó, validó y publicó el dataset.
 
+> [!TIP]
+> **¿Buscás el código de fine-tuning, adapters entrenados y evaluación de modelos?**
+> El trabajo de ajuste fino (QLoRA, TRL, inference y evaluación de modelos) vive en su propio repositorio:
+> [**MaternaCare-ES →**](https://github.com/JhonHander/MaternaCare-ES)
+> Los adapters entrenados y el dataset también están publicados en HuggingFace bajo la organización [`iue-edu`](https://huggingface.co/iue-edu).
+
 ## ¿Qué es MaternaQA-es?
 
 **MaternaQA-es** es un recurso de datos para entrenar, evaluar y analizar modelos de lenguaje en tareas de preguntas y respuestas clínicas en español. El dataset se construyó a partir de documentos clínicos extensos relacionados con salud materna y perinatal, transformados en fragmentos auditables y posteriormente en pares pregunta-respuesta sintéticos con control de calidad.
+
+Este repositorio se enfoca exclusivamente en la **construcción, auditoría y publicación del dataset**. El fine-tuning y la evaluación de modelos se mantienen en [**MaternaCare-ES**](https://github.com/JhonHander/MaternaCare-ES) para mantener ambos proyectos modulares y reproducibles.
 
 El repositorio incluye:
 
@@ -59,7 +67,7 @@ datasets/obstetrics/qa/publication/
 | `sft_grounded` | Contexto + Pregunta → Respuesta | Fine-tuning o evaluación con evidencia documental. |
 | `qa_flat_jsonl` | Registro plano con metadatos | Auditoría, análisis exploratorio y documentación científica. |
 
-[📁 Ver archivos del dataset](./datasets/obstetrics/qa/publication) · [🤗 Ver en Hugging Face](https://huggingface.co/datasets/JhonHander/obstetrics-qa-synthetic-es)
+[📁 Ver archivos del dataset](./datasets/obstetrics/qa/publication) · [🤗 Ver en Hugging Face](https://huggingface.co/datasets/iue-edu/MaternaCare-ES)
 
 ## Corpus documental base
 
@@ -136,7 +144,7 @@ Los tópicos anotados incluyen:
 ### 1. Instalar dependencias
 
 ```bash
-git clone https://github.com/NicolasHoyosDevss/Fine-Tunning-Benchmark.git MaternaQA-es
+git clone https://github.com/NicolasHoyosDevss/MaternaQA-es.git MaternaQA-es
 cd MaternaQA-es
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
@@ -180,91 +188,16 @@ python scripts/generate_synthetic_qa.py \
 
 ### 4. Fine-tuning con QLoRA
 
-El dataset ya está listo para entrenar. Solo necesitás elegir modelo, cumplir los requisitos y ejecutar.
+El dataset está listo para entrenar. El código de fine-tuning, adapters entrenados y evaluación de modelos se mantienen en el repositorio [**MaternaCare-ES**](https://github.com/JhonHander/MaternaCare-ES).
 
-El script lee las variantes publicadas en formato chat (`messages`) y las convierte internamente a `prompt`/`completion` antes de entrenar. Así la pérdida se calcula solo sobre la respuesta esperada sin depender de máscaras del chat template del modelo, que en Gemma/MedGemma pueden no estar disponibles.
-
-#### ¿Qué variante elijo?
+Los adapters publicados en HuggingFace:
+- [`iue-edu/MaternaCare-ES-gemma4-qlora`](https://huggingface.co/iue-edu/MaternaCare-ES-gemma4-qlora)
+- [`iue-edu/MaternaCare-ES-medgemma-qlora`](https://huggingface.co/iue-edu/MaternaCare-ES-medgemma-qlora)
 
 | Variante | Qué recibe el modelo | Cuándo usarla |
 |---|---|---|
 | `sft_grounded` | contexto clínico + pregunta → respuesta | Querés que el modelo razone sobre evidencia. **Empezá por acá.** |
 | `sft_closed_book` | solo pregunta → respuesta | Querés medir cuánto internaliza el dominio sin ayuda. |
-
-#### Requisitos
-
-Antes de ejecutar asegurate de tener esto:
-
-- [ ] `pip install -r requirements.txt`
-- [ ] `huggingface-cli login` o `export HF_TOKEN=<tu_token>`
-- [ ] Aceptar los términos del modelo en huggingface.co (Gemma 4 y MedGemma son gated)
-- [ ] GPU NVIDIA con ≥ 16 GB VRAM (si tenés menos, probablemente no entre)
-
----
-
-#### Paso 1 — Smoke test (~3 min)
-
-Valida que todo carga y entrena sin errores. Solo 10 pasos con pocos ejemplos.
-
-**Gemma 4 E2B:**
-```bash
-python scripts/train_qlora_trl.py \
-  --model-name google/gemma-4-E2B-it \
-  --dataset-variant sft_grounded \
-  --output-dir outputs/smoke-gemma4 \
-  --max-steps 10 \
-  --train-limit 64 \
-  --eval-limit 32
-```
-
-**MedGemma 1.5 4B:**
-```bash
-python scripts/train_qlora_trl.py \
-  --model-name google/medgemma-1.5-4b-it \
-  --dataset-variant sft_grounded \
-  --output-dir outputs/smoke-medgemma \
-  --max-steps 10 \
-  --train-limit 64 \
-  --eval-limit 32
-```
-
-> Si MedGemma falla con error de arquitectura, agregá `--model-class causal-lm`.
-
-#### Paso 2 — Entrenamiento real (~2–4 h según GPU)
-
-Sin flags limitantes. Entrena sobre los 5093 pares del dataset con 2 épocas.
-
-**Gemma 4 E2B:**
-```bash
-# Grounded (recomendado)
-python scripts/train_qlora_trl.py \
-  --model-name google/gemma-4-E2B-it \
-  --dataset-variant sft_grounded \
-  --output-dir outputs/gemma4-grounded
-
-# Closed-book
-python scripts/train_qlora_trl.py \
-  --model-name google/gemma-4-E2B-it \
-  --dataset-variant sft_closed_book \
-  --output-dir outputs/gemma4-closed-book
-```
-
-**MedGemma 1.5 4B:**
-```bash
-# Grounded (recomendado)
-python scripts/train_qlora_trl.py \
-  --model-name google/medgemma-1.5-4b-it \
-  --dataset-variant sft_grounded \
-  --output-dir outputs/medgemma-grounded
-
-# Closed-book
-python scripts/train_qlora_trl.py \
-  --model-name google/medgemma-1.5-4b-it \
-  --dataset-variant sft_closed_book \
-  --output-dir outputs/medgemma-closed-book
-```
-
-> **¿Qué va a pasar?** El script carga el modelo en 4 bits, entrena adapters LoRA (r=16) sobre todas las capas lineales, calcula pérdida solo sobre `completion`, y guarda solo los adapters en `output-dir/`. El modelo base no se modifica. Revisá `python scripts/train_qlora_trl.py --help` para ajustar hiperparámetros.
 
 ## Estructura del repositorio
 
@@ -282,7 +215,7 @@ MaternaQA-es/
 │   └── qa/
 │       ├── final/                # Q+A por split antes de publicación
 │       └── publication/          # variantes finales del dataset
-├── scripts/                      # procesamiento, evaluación y entrenamiento experimental
+├── scripts/                      # procesamiento, evaluación del dataset y publicación
 ├── docs/                         # metodología y notas técnicas
 ├── papers/                       # planeación del paper de dataset
 ├── public/app-icon.png
@@ -298,12 +231,10 @@ MaternaQA-es/
 | `build_lm_dataset.py` | Segmenta documentos y construye el corpus limpio. |
 | `audit_dataset.py` | Genera reportes de calidad, duplicados y splits. |
 | `generate_synthetic_qa.py` | Genera pares pregunta-respuesta con salidas estructuradas. |
-| `evaluate_qa_with_ragas.py` | Evalúa muestras Q+A con métricas Ragas. |
+| `evaluate_qa_with_ragas.py` | Evalúa muestras Q+A con métricas Ragas (calidad del dataset). |
 | `prepare_qa_publication_variants.py` | Exporta variantes listas para publicación. |
-| `train_qlora_trl.py` | Ejecuta fine-tuning experimental con TRL, PEFT y QLoRA. |
-| `inference_base.py` | Genera predicciones baseline con el modelo base sin adapter. |
-| `inference_qlora.py` | Genera predicciones con un adapter QLoRA entrenado. |
-| `evaluate_model_predictions.py` | Evalúa predicciones de modelos contra referencia y contexto fuente. |
+| `run_full_pipeline.py` | Ejecuta la cadena completa de extracción a publicación. |
+| `run_incremental.py` | Procesa solo PDFs nuevos o modificados. |
 
 ## Documentación
 
