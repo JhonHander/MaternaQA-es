@@ -7,7 +7,7 @@
 **MaternaQA-es es un dataset público en español dedicado a Q+A sobre atención médica materna. Se creó para apoyar la investigación en PLN, el ajuste de modelos de lenguaje grande (LLM Fine-tuning), los sistemas de recuperación de información (RAG) y las aplicaciones de IA centradas en la atención médica para las comunidades de habla hispana.**
 
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white&labelColor=1e293b)](https://python.org)
-[![Dataset](https://img.shields.io/badge/Dataset-5%2C727%20pares%20QA-EC4899?style=for-the-badge&logo=databricks&logoColor=white&labelColor=1e293b)](https://huggingface.co/datasets/iue-edu/MaternaCare-ES)
+[![Dataset](https://img.shields.io/badge/Dataset-5%2C727%20pares%20QA-EC4899?style=for-the-badge&logo=databricks&logoColor=white&labelColor=1e293b)](https://huggingface.co/datasets/iue-edu/MaternaQA-es)
 [![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Datasets-FFD21E?style=for-the-badge&logo=huggingface&logoColor=white&labelColor=1e293b)](https://huggingface.co/organizations/iue-edu)
 [![PDFs](https://img.shields.io/badge/Fuentes-63%20PDFs%20cl%C3%ADnicos-22D3EE?style=for-the-badge&logo=adobeacrobatreader&logoColor=white&labelColor=1e293b)](./pdfs/obstetrics)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-FACC15?style=for-the-badge&logo=opensourceinitiative&logoColor=black&labelColor=1e293b)](./LICENSE)
@@ -25,7 +25,7 @@
 > **¿Buscás el código de fine-tuning, adapters entrenados y evaluación de modelos?**
 > El trabajo de ajuste fino (QLoRA, TRL, inference y evaluación de modelos) vive en su propio repositorio:
 > [**MaternaCare-ES →**](https://github.com/JhonHander/MaternaCare-ES)
-> Los adapters entrenados y el dataset también están publicados en HuggingFace bajo la organización [`iue-edu`](https://huggingface.co/iue-edu).
+> El dataset está publicado como [`iue-edu/MaternaQA-es`](https://huggingface.co/datasets/iue-edu/MaternaQA-es) y los adapters entrenados viven en HuggingFace bajo la organización [`iue-edu`](https://huggingface.co/iue-edu).
 
 ## ¿Qué es MaternaQA-es?
 
@@ -67,7 +67,7 @@ datasets/obstetrics/qa/publication/
 | `sft_grounded` | Contexto + Pregunta → Respuesta | Fine-tuning o evaluación con evidencia documental. |
 | `qa_flat_jsonl` | Registro plano con metadatos | Auditoría, análisis exploratorio y documentación científica. |
 
-[📁 Ver archivos del dataset](./datasets/obstetrics/qa/publication) · [🤗 Ver en Hugging Face](https://huggingface.co/datasets/iue-edu/MaternaCare-ES)
+[📁 Ver archivos del dataset](./datasets/obstetrics/qa/publication) · [🤗 Ver en Hugging Face](https://huggingface.co/datasets/iue-edu/MaternaQA-es)
 
 ## Corpus documental base
 
