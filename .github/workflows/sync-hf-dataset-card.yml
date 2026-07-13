@@ -35,7 +35,9 @@ jobs:
           import os
           from huggingface_hub import HfApi
 
-          token = os.environ["HF_TOKEN"]
+          token = os.getenv("HF_TOKEN")
+          if not token:
+              raise SystemExit("HF_TOKEN is not set. Configure the HF_TOKEN repository secret to sync the dataset card.")
           api = HfApi(token=token)
           repo_id = "iue-edu/MaternaQA-es"
 
